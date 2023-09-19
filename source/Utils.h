@@ -22,6 +22,7 @@ namespace dae
 			hitRecord.t = (-b - sqrt(discriminant)) / (2 * a);
 			hitRecord.origin = ray.origin + hitRecord.t * ray.direction;
 			hitRecord.normal = (hitRecord.origin - sphere.origin).Normalized();
+			hitRecord.materialIndex = sphere.materialIndex;
 
 
 			return hitRecord.didHit;
