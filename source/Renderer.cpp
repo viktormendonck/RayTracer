@@ -31,23 +31,27 @@ void Renderer::Render(Scene* pScene) const
 	{
 		for (int py{}; py < m_Height; ++py)
 		{
-			/*float gradient = px / static_cast<float>(m_Width);
-			gradient += py / static_cast<float>(m_Width);
-			gradient /= 2.0f;
 
-			ColorRGB finalColor{ gradient, gradient, gradient };
-			*/
-			float ar = m_Width / m_Height;
-			float CameraX = (((2 * (px + 0.5)) / m_Width) - 1) * ar;
-			float CameraY = (1-((2 * (py + 0.5)) / m_Height));
+			float ar{ static_cast<float>(m_Width) / static_cast<float>(m_Height) };
+			float cameraX{ (2 * (px + 0.5f) / m_Width - 1) * ar };
+			float cameraY{ 1 - (2 * (py + 0.5f)/ m_Height) };
 
-			Vector3 look = camera.forward;
-			Vector3 right = camera.right*CameraX;
-			Vector3 up = camera.up*CameraY;
-			Vector3 rayDir = (look+right+up).Normalized();
+			/*float cameraX{ (2 * (px + 0.5f) / m_Width - 1) * aspectRatio };
+			float cameraY{ 1 - (2 * (py + 0.5f) / m_Height) };*/
 
+			Vector3 rayDir{ camera.forward + (camera.right * cameraX) + (camera.up * cameraY) };
 
-			ColorRGB finalColor{ rayDir.x,rayDir.y,rayDir.z };
+			Ray viewRay{ camera.origin,rayDir };
+			ColorRGB finalColor{};
+			HitRecord closestHit{};
+
+			Sphere testSphere{{ 0.0f,0.0f ,100.f}, 50.f, 0 };
+
+			GeometryUtils::HitTest_Sphere(testSphere, viewRay, closestHit);
+
+			if (closestHit.didHit) {
+				finalColor = materials[closestHit.materialIndex]->Shade();
+			}
 
 			//Update Color in Buffer
 			finalColor.MaxToOne();
