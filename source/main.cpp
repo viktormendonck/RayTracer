@@ -11,8 +11,16 @@
 #include "Timer.h"
 #include "Renderer.h"
 #include "Scene.h"
+#include "Scene_W1.h"
 
 using namespace dae;
+
+
+void TestCode() {
+
+	
+
+}
 
 void ShutDown(SDL_Window* pWindow)
 {
@@ -77,6 +85,10 @@ int main(int argc, char* args[])
 
 		//--------- Update ---------
 		pScene->Update(pTimer);
+
+		//TODO: delete
+		TestCode();
+
 
 		//--------- Render ---------
 		pRenderer->Render(pScene);

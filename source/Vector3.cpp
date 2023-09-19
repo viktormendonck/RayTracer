@@ -5,6 +5,7 @@
 #include "Vector4.h"
 #include <cmath>
 
+
 namespace dae {
 	const Vector3 Vector3::UnitX = Vector3{ 1, 0, 0 };
 	const Vector3 Vector3::UnitY = Vector3{ 0, 1, 0 };
@@ -45,16 +46,13 @@ namespace dae {
 
 	float Vector3::Dot(const Vector3& v1, const Vector3& v2)
 	{
-		//todo W1
-		assert(false && "Not Implemented Yet");
-		return {};
+		return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
 	}
 
 	Vector3 Vector3::Cross(const Vector3& v1, const Vector3& v2)
 	{
-		//todo W1
-		assert(false && "Not Implemented Yet");
-		return {};
+		
+		return {Vector3(v1.y*v2.z-v1.z*v2.y,v1.z*v2.x-v1.x*v2.z,v1.x*v2.y-v1.y*v2.x)};
 	}
 
 	Vector3 Vector3::Project(const Vector3& v1, const Vector3& v2)
@@ -80,6 +78,13 @@ namespace dae {
 	Vector4 Vector3::ToVector4() const
 	{
 		return { x, y, z, 0 };
+	}
+
+	std::string Vector3::ToString() const
+	{
+		std::stringstream ss;
+		ss << "[" << x << "," << y << "," << z << "]";
+		return std::string(ss.str());
 	}
 
 #pragma region Operator Overloads

@@ -31,19 +31,31 @@ void Renderer::Render(Scene* pScene) const
 	{
 		for (int py{}; py < m_Height; ++py)
 		{
-			float gradient = px / static_cast<float>(m_Width);
+			/*float gradient = px / static_cast<float>(m_Width);
 			gradient += py / static_cast<float>(m_Width);
 			gradient /= 2.0f;
 
 			ColorRGB finalColor{ gradient, gradient, gradient };
+			*/
+			float ar = m_Width / m_Height;
+			float CameraX = (((2 * (px + 0.5)) / m_Width) - 1) * ar;
+			float CameraY = (1-((2 * (py + 0.5)) / m_Height));
+
+			Vector3 look = camera.forward;
+			Vector3 right = camera.right*CameraX;
+			Vector3 up = camera.up*CameraY;
+			Vector3 rayDir = (look+right+up).Normalized();
+
+
+			ColorRGB finalColor{ rayDir.x,rayDir.y,rayDir.z };
 
 			//Update Color in Buffer
 			finalColor.MaxToOne();
-
 			m_pBufferPixels[px + (py * m_Width)] = SDL_MapRGB(m_pBuffer->format,
 				static_cast<uint8_t>(finalColor.r * 255),
 				static_cast<uint8_t>(finalColor.g * 255),
 				static_cast<uint8_t>(finalColor.b * 255));
+
 		}
 	}
 

@@ -1,4 +1,6 @@
 #pragma once
+#include "string"
+#include "sstream"
 
 namespace dae
 {
@@ -28,6 +30,7 @@ namespace dae
 
 		Vector4 ToPoint4() const;
 		Vector4 ToVector4() const;
+		std::string  ToString() const;
 
 		//Member Operators
 		Vector3 operator*(float scale) const;
