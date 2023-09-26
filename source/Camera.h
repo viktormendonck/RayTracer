@@ -20,6 +20,7 @@ namespace dae
 
 
 		Vector3 origin{};
+
 		float fovAngle{90.f};
 
 		Vector3 forward{Vector3::UnitZ};

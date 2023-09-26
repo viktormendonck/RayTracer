@@ -16,16 +16,15 @@ void Scene_W1::Initialize()
 	const unsigned char matId_Solid_Gray = AddMaterial(new dae::Material_SolidColor{ dae::colors::Gray });
 	const unsigned char matId_Solid_Black = AddMaterial(new dae::Material_SolidColor{ dae::colors::Black });
 
-	const float distance{ 0.5f };
-	const int ballsAmount{ 200 };
+	const float distance{ 25.f };
+	const int ballsAmount{ 3 };
 
-	for (int i{ 0 }; i < ballsAmount / 2; ++i)
+	for (int i{ 0 }; i < ballsAmount; ++i)
 	{
-		//const unsigned char color { static_cast<unsigned char>(i % 8) };
-		const unsigned char color{ matId_Solid_Cyan };
-		const float location{ distance * i };
-		AddSphere({ -location, location, 100.f }, 50.f, color);
-		AddSphere({ location, -location, 100.f }, 50.f, color);
+		const unsigned char color { static_cast<unsigned char>(i % 8) };
+		//const unsigned char color{ matId_Solid_Cyan };
+		const float location{ distance * (i-(ballsAmount/2)) };
+		AddSphere({ location, 0.f, 100.f }, 50.f, color);
 
 	}
 

@@ -12,14 +12,12 @@
 #include "Renderer.h"
 #include "Scene.h"
 #include "Scene_W1.h"
+#include "Scene_W2.h"
 
 using namespace dae;
 
 
 void TestCode() {
-
-	
-
 }
 
 void ShutDown(SDL_Window* pWindow)
@@ -53,7 +51,7 @@ int main(int argc, char* args[])
 	const auto pTimer = new Timer();
 	const auto pRenderer = new Renderer(pWindow);
 
-	const auto pScene = new Scene_W1();
+	const auto pScene = new Scene_W2();
 	pScene->Initialize();
 
 	//Start loop
