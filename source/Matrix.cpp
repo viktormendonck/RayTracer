@@ -131,7 +131,6 @@ namespace dae {
 
 	Matrix Matrix::CreateRotation(const Vector3& r)
 	{
-	
 		return {CreateRotationX(r.x)*CreateRotationY(r.y)*CreateRotationZ(r.z)};
 	}
 

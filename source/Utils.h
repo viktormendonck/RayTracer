@@ -15,11 +15,24 @@ namespace dae
 			//todo W1
 			float a{ Vector3::Dot(ray.direction, ray.direction) };
 			Vector3 sphereToRay{ ray.origin - sphere.origin };
-			float b{Vector3::Dot(2 * ray.direction, sphereToRay)};
-			float c{Vector3::Dot(sphereToRay, sphereToRay) - (sphere.radius * sphere.radius)};
+			float b{ Vector3::Dot(2 * ray.direction, sphereToRay) };
+			float c{ Vector3::Dot(sphereToRay, sphereToRay) - (sphere.radius * sphere.radius) };
 			float discriminant{ b * b - 4 * a * c };
-			hitRecord.didHit = discriminant > 0;
-			hitRecord.t = (-b - sqrt(discriminant)) / (2 * a);
+
+			if (discriminant <= 0)
+			{
+				return false;
+			}
+
+			float t = (-b - sqrtf(discriminant)) / (2 * a);
+
+			if (t <= ray.min || t > ray.max)
+			{
+				return false;
+			}
+
+			hitRecord.t = t;
+			hitRecord.didHit = true;
 			hitRecord.origin = ray.origin + hitRecord.t * ray.direction;
 			hitRecord.normal = (hitRecord.origin - sphere.origin).Normalized();
 			hitRecord.materialIndex = sphere.materialIndex;
@@ -41,18 +54,18 @@ namespace dae
 		{
 			float denom = Vector3::Dot(ray.direction,plane.normal);
 			float t = Vector3::Dot((plane.origin - ray.origin), plane.normal) / denom;
-			if (t <= ray.min) // your favorite epsilon
+			if (t <= ray.min || t > ray.max) // your favorite epsilon
 			{
-				hitRecord.didHit = false;
-			} else 
-			{
-				hitRecord.didHit = true;
-				hitRecord.t = t;
- 				hitRecord.origin = ray.origin + hitRecord.t * ray.direction;
-				hitRecord.normal = (hitRecord.origin - plane.origin).Normalized();
-				hitRecord.materialIndex = plane.materialIndex;
-			}
-			return hitRecord.didHit;
+				return false;
+			}  
+			
+			hitRecord.didHit = true;
+			hitRecord.t = t;
+ 			hitRecord.origin = ray.origin + t * ray.direction;
+			hitRecord.normal = plane.normal;
+			hitRecord.materialIndex = plane.materialIndex;
+			
+			return true;
 		}
 
 		inline bool HitTest_Plane(const Plane& plane, const Ray& ray)
@@ -97,9 +110,7 @@ namespace dae
 		//Direction from target to light
 		inline Vector3 GetDirectionToLight(const Light& light, const Vector3 origin)
 		{
-			//todo W3
-			assert(false && "No Implemented Yet!");
-			return {};
+			return { light.origin - origin };
 		}
 
 		inline ColorRGB GetRadiance(const Light& light, const Vector3& target)

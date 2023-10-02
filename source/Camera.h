@@ -22,10 +22,15 @@ namespace dae
 		Vector3 origin{};
 
 		float fovAngle{90.f};
+		float speed{20.f};
 
-		Vector3 forward{0.266f,-0.453f,0.860f};
+		Vector3 forward{Vector3::UnitZ};
 		Vector3 up{Vector3::UnitY};
 		Vector3 right{Vector3::UnitX};
+
+		float totalPitch {0.f};
+
+		float totalYaw {0.f};
 
 		
 
@@ -34,10 +39,17 @@ namespace dae
 
 		Matrix CalculateCameraToWorld()
 		{
-			right = Vector3::Cross(Vector3::UnitY,forward);
-			up = Vector3::Cross(forward,right);
-			Matrix onb{ right,up,forward,origin };
-			return {onb};
+			
+			Matrix finalRotation = Matrix::CreateRotation(totalPitch, totalYaw, 0);
+			forward = finalRotation.TransformVector(Vector3::UnitZ);
+			forward.Normalize();
+
+			right = Vector3::Cross(Vector3::UnitY,forward).Normalized();
+			up = Vector3::Cross(forward,right).Normalized();
+			
+			cameraToWorld = { right,up,forward,origin };
+
+			return cameraToWorld;
 		}
 
 		void Update(Timer* pTimer)
@@ -47,13 +59,63 @@ namespace dae
 			//Keyboard Input
 			const uint8_t* pKeyboardState = SDL_GetKeyboardState(nullptr);
 
-
 			//Mouse Input
 			int mouseX{}, mouseY{};
 			const uint32_t mouseState = SDL_GetRelativeMouseState(&mouseX, &mouseY);
+			//wasd controlls
+			if (pKeyboardState[SDL_SCANCODE_W]) 
+			{
+				origin += speed * deltaTime * forward;
+			}
+			if (pKeyboardState[SDL_SCANCODE_S]) 
+			{
+				origin -= speed * deltaTime * forward;
+			}
+			if (pKeyboardState[SDL_SCANCODE_D])
+			{
+				origin += speed * deltaTime * right;
+			}
+			if (pKeyboardState[SDL_SCANCODE_A])
+			{
+				origin -= speed * deltaTime * right;
+			}
+			//mouse controlls
+			bool leftMouse{ (mouseState & SDL_BUTTON(1)) != 0 };
+			bool rightMouse{ (mouseState & SDL_BUTTON(3)) != 0 };
+			
+			if (rightMouse && !leftMouse) 
+			{
+				totalPitch += deltaTime * -mouseY;
+				totalYaw += deltaTime * mouseX;
+			}
+			
+			if (leftMouse && !rightMouse) 
+			{
+				if (mouseY > 0) 
+				{
+					origin -= speed * deltaTime * forward;
+				}
+				else if (mouseY < 0) 
+				{
+					origin += speed * deltaTime * forward;
 
-			//todo: W2
-			//assert(false && "Not Implemented Yet");
+				}
+				totalYaw += deltaTime * mouseX;
+			}
+
+			if (leftMouse && rightMouse)
+			{
+				if (mouseY > 0) 
+				{
+					origin -= speed * deltaTime * up;
+				}
+				else if (mouseY < 0) 
+				{
+					origin += speed * deltaTime * up;
+				}
+			}
+
+
 		}
 	};
 }

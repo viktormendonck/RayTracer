@@ -25,7 +25,6 @@ void Scene_W1::Initialize()
 		//const unsigned char color{ matId_Solid_Cyan };
 		const float location{ distance * (i-(ballsAmount/2)) };
 		AddSphere({ location, 0.f, 100.f }, 50.f, color);
-
 	}
 
 

@@ -11,7 +11,7 @@
 #include "Timer.h"
 #include "Renderer.h"
 #include "Scene.h"
-#include "Scene_W1.h"
+//#include "Scene_W1.h"
 #include "Scene_W2.h"
 
 using namespace dae;
@@ -39,7 +39,7 @@ int main(int argc, char* args[])
 	const uint32_t height = 480;
 
 	SDL_Window* pWindow = SDL_CreateWindow(
-		"RayTracer - **Insert Name**",
+		"RayTracer - Viktor Mendonck",
 		SDL_WINDOWPOS_UNDEFINED,
 		SDL_WINDOWPOS_UNDEFINED,
 		width, height, 0);

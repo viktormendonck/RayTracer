@@ -1,6 +1,7 @@
 #include "Scene.h"
 #include "Utils.h"
 #include "Material.h"
+#include <iostream>
 
 namespace dae {
 
@@ -45,13 +46,31 @@ namespace dae {
 				closestHit = tempHitRecord;
 			}
 		}
+
+
 	}
 
 	bool Scene::DoesHit(const Ray& ray) const
 	{
-		//todo W3
-		assert(false && "No Implemented Yet!");
+		
+		for (size_t i{}; i < m_SphereGeometries.size(); ++i)
+		{
+			if (GeometryUtils::HitTest_Sphere(m_SphereGeometries[i], ray))
+			{
+				return true;
+			}
+		}
+
+		for (size_t i{}; i < m_PlaneGeometries.size(); ++i)
+		{
+			if (GeometryUtils::HitTest_Plane(m_PlaneGeometries[i], ray)) 
+			{
+				return true;
+			}
+		}
+
 		return false;
+		
 	}
 
 #pragma region Scene Helpers
