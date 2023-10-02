@@ -101,7 +101,7 @@ namespace dae {
 	{
 		return data[3];
 	}
-
+ 
 	Matrix Matrix::CreateTranslation(float x, float y, float z)
 	{
 		return {CreateTranslation(Vector3{x,y,z})};

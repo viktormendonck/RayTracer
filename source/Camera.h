@@ -23,21 +23,21 @@ namespace dae
 
 		float fovAngle{90.f};
 
-		Vector3 forward{Vector3::UnitZ};
+		Vector3 forward{0.266f,-0.453f,0.860f};
 		Vector3 up{Vector3::UnitY};
 		Vector3 right{Vector3::UnitX};
 
-		float totalPitch{0.f};
-		float totalYaw{0.f};
+		
 
 		Matrix cameraToWorld{};
 
 
 		Matrix CalculateCameraToWorld()
 		{
-			//todo: W2
-			assert(false && "Not Implemented Yet");
-			return {};
+			right = Vector3::Cross(Vector3::UnitY,forward);
+			up = Vector3::Cross(forward,right);
+			Matrix onb{ right,up,forward,origin };
+			return {onb};
 		}
 
 		void Update(Timer* pTimer)

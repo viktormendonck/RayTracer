@@ -9,6 +9,7 @@
 #include "Material.h"
 #include "Scene.h"
 #include "Utils.h"
+#include <iostream>
 
 using namespace dae;
 
@@ -31,12 +32,15 @@ void Renderer::Render(Scene* pScene) const
 	{
 		for (int py{}; py < m_Height; ++py)
 		{
-			float fov{ std::tanf(camera.fovAngle / 2) };
+			float fov{ std::tanf(camera.fovAngle * PI / 180.f / 2.f) };
+			
 			float ar{ static_cast<float>(m_Width) / static_cast<float>(m_Height) };
-			float cameraX{ (2 * (px + 0.5f) / m_Width - 1) * ar * fov };
-			float cameraY{ (1 - (2 * (py + 0.5f)/ m_Height)) * fov };
+			float cameraX{ (2.f * ((px + 0.5f) / m_Width) - 1.f) * ar * fov };
+			float cameraY{ (1.f - (2.f * (py + 0.5f)/ m_Height)) * fov };
 			
 			Vector3 rayDir{ (camera.forward + (camera.right * cameraX) + (camera.up * cameraY)) };
+			rayDir.Normalize();
+
 
 			Ray viewRay{ camera.origin,rayDir };
 			ColorRGB finalColor{};
