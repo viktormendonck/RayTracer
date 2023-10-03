@@ -10,7 +10,7 @@ namespace dae
 	{
 #pragma region Sphere HitTest
 		//SPHERE HIT-TESTS
-		inline bool HitTest_Sphere(const Sphere& sphere, const Ray& ray, HitRecord& hitRecord, bool ignoreHitRecord = false)
+		inline bool HitTest_Sphere(const Sphere& sphere, const Ray& ray, HitRecord& hitRecord)
 		{
 			//todo W1
 			float a{ Vector3::Dot(ray.direction, ray.direction) };
@@ -64,9 +64,10 @@ namespace dae
 		}
 
 #pragma endregion
+
 #pragma region Plane HitTest
 		//PLANE HIT-TESTS
-		inline bool HitTest_Plane(const Plane& plane, const Ray& ray, HitRecord& hitRecord, bool ignoreHitRecord = false)
+		inline bool HitTest_Plane(const Plane& plane, const Ray& ray, HitRecord& hitRecord)
 		{
 			float denom = Vector3::Dot(ray.direction,plane.normal);
 			float t = Vector3::Dot((plane.origin - ray.origin), plane.normal) / denom;
@@ -88,7 +89,7 @@ namespace dae
 		{
 			float denom = Vector3::Dot(ray.direction, plane.normal);
 			float t = Vector3::Dot((plane.origin - ray.origin), plane.normal) / denom;
-			if (t <= ray.min || t > ray.max) // your favorite epsilon
+			if (t <= ray.min || t > ray.max) 
 			{
 				return false;
 			}
