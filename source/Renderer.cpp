@@ -51,24 +51,32 @@ void Renderer::Render(Scene* pScene) const
 			pScene->GetClosestHit(viewRay, closestHit);
 
 			if (closestHit.didHit) {
-				finalColor = materials[closestHit.materialIndex]->Shade();
-					
-				for (int lightIndex{0}; lightIndex < pScene->GetLights().size(); ++lightIndex)
-				{
-					Vector3 dirToLight{ LightUtils::GetDirectionToLight(pScene->GetLights()[lightIndex], closestHit.origin) };
-					float lightDist{ dirToLight.Normalize() };
-					Ray ray{ closestHit.origin + closestHit.normal * 0.001f,dirToLight,0.f,lightDist};
-					
 
-					if (pScene->DoesHit(ray))
+				if (m_ShadowsEnabled) {
+					for (int lightIndex{ 0 }; lightIndex < lights.size(); ++lightIndex)
 					{
-						finalColor *= 0.5f;
+						Vector3 dirToLight{ LightUtils::GetDirectionToLight(lights[lightIndex], closestHit.origin) };
+						float lightDist{ dirToLight.Normalize() };
+						Ray ray{ closestHit.origin + closestHit.normal * 0.001f,dirToLight,0.f,lightDist };
+
+
+						if (pScene->DoesHit(ray))
+						{
+							//finalColor *= 0.5f;
+						}
+						float lambert = Vector3::Dot(closestHit.normal, LightUtils::GetDirectionToLight(lights[lightIndex], closestHit.origin).Normalized());
+						if (lambert > 0) 
+						{
+							ColorRGB radiance{ LightUtils::GetRadiance(lights[lightIndex], closestHit.origin) };
+							finalColor += (radiance* materials[closestHit.materialIndex]->Shade() *lambert);
+						}
 					}
 				}
 			}
 
 			//Update Color in Buffer
 			finalColor.MaxToOne();
+
 			m_pBufferPixels[px + (py * m_Width)] = SDL_MapRGB(m_pBuffer->format,
 				static_cast<uint8_t>(finalColor.r * 255),
 				static_cast<uint8_t>(finalColor.g * 255),
@@ -84,6 +92,11 @@ void Renderer::Render(Scene* pScene) const
 bool Renderer::SaveBufferToImage() const
 {
 	return SDL_SaveBMP(m_pBuffer, "RayTracing_Buffer.bmp");
+}
+
+void dae::Renderer::CycleLightingMode()
+{
+	m_LightingMode = static_cast<LightingMode>((static_cast<int>(m_LightingMode) + 1) % 4);
 }
 
 //bool dae::Renderer::LightHitCheck(const Ray& ray) const
