@@ -55,7 +55,7 @@ namespace dae {
 		
 		for (size_t i{}; i < m_SphereGeometries.size(); ++i)
 		{
-			if (GeometryUtils::HitTest_Sphere(m_SphereGeometries[i], ray))
+			if (GeometryUtils::DoesHit_Sphere(m_SphereGeometries[i], ray))
 			{
 				return true;
 			}
@@ -63,7 +63,7 @@ namespace dae {
 
 		for (size_t i{}; i < m_PlaneGeometries.size(); ++i)
 		{
-			if (GeometryUtils::HitTest_Plane(m_PlaneGeometries[i], ray)) 
+			if (GeometryUtils::DoesHit_Plane(m_PlaneGeometries[i], ray))
 			{
 				return true;
 			}

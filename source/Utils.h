@@ -41,12 +41,28 @@ namespace dae
 			return hitRecord.didHit;
 		}
 
-		inline bool HitTest_Sphere(const Sphere& sphere, const Ray& ray)
+		inline bool DoesHit_Sphere(const Sphere& sphere, const Ray& ray)
 		{
+			float a{ Vector3::Dot(ray.direction, ray.direction) };
+			Vector3 sphereToRay{ ray.origin - sphere.origin };
+			float b{ Vector3::Dot(2 * ray.direction, sphereToRay) };
+			float c{ Vector3::Dot(sphereToRay, sphereToRay) - (sphere.radius * sphere.radius) };
+			float discriminant{ b * b - 4 * a * c };
 
-			HitRecord temp{};
-			return HitTest_Sphere(sphere, ray, temp, true);
+			if (discriminant <= 0)
+			{
+				return false;
+			}
+
+			float t = (-b - sqrtf(discriminant)) / (2 * a);
+
+			if (t <= ray.min || t > ray.max)
+			{
+				return false;
+			}
+			return true;
 		}
+
 #pragma endregion
 #pragma region Plane HitTest
 		//PLANE HIT-TESTS
@@ -68,11 +84,17 @@ namespace dae
 			return true;
 		}
 
-		inline bool HitTest_Plane(const Plane& plane, const Ray& ray)
+		inline bool DoesHit_Plane(const Plane& plane, const Ray& ray)
 		{
-			HitRecord temp{};
-			return HitTest_Plane(plane, ray, temp, true);
+			float denom = Vector3::Dot(ray.direction, plane.normal);
+			float t = Vector3::Dot((plane.origin - ray.origin), plane.normal) / denom;
+			if (t <= ray.min || t > ray.max) // your favorite epsilon
+			{
+				return false;
+			}
+			return true;
 		}
+		
 #pragma endregion
 #pragma region Triangle HitTest
 		//TRIANGLE HIT-TESTS
