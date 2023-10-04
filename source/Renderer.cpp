@@ -42,7 +42,7 @@ void Renderer::Render(Scene* pScene) const
 			float cameraY{ (1.f - (2.f * (py + 0.5f)/ m_Height)) * fov };
 			
 			Vector3 rayDir{ (camera.forward + (camera.right * cameraX) + (camera.up * cameraY)) };
-			rayDir.Normalize();
+			const float magnitude = rayDir.Normalize();
 
 			Ray viewRay{ camera.origin,rayDir };
 			ColorRGB finalColor{};
@@ -50,28 +50,53 @@ void Renderer::Render(Scene* pScene) const
 			
 			pScene->GetClosestHit(viewRay, closestHit);
 
-			if (closestHit.didHit) {
+			if (closestHit.didHit) 
+			{
 
-				if (m_ShadowsEnabled) {
-					for (int lightIndex{ 0 }; lightIndex < lights.size(); ++lightIndex)
+				for (int lightIndex{ 0 }; lightIndex < lights.size(); ++lightIndex)
+				{
+					Vector3 dirToLight{ LightUtils::GetDirectionToLight(lights[lightIndex], closestHit.origin) };
+					float lightDist{ dirToLight.Normalize() };
+					float lambert = Vector3::Dot(closestHit.normal, dirToLight);
+
+
+					if (m_ShadowsEnabled)
 					{
-						Vector3 dirToLight{ LightUtils::GetDirectionToLight(lights[lightIndex], closestHit.origin) };
-						float lightDist{ dirToLight.Normalize() };
-						Ray ray{ closestHit.origin + closestHit.normal * 0.001f,dirToLight,0.f,lightDist };
-
-
-						if (pScene->DoesHit(ray))
+						Ray shadowRay{ closestHit.origin + closestHit.normal * 0.001f,dirToLight,0.f,lightDist };
+						if (pScene->DoesHit(shadowRay)) 
 						{
-							//finalColor *= 0.5f;
-						}
-						float lambert = Vector3::Dot(closestHit.normal, LightUtils::GetDirectionToLight(lights[lightIndex], closestHit.origin).Normalized());
-						if (lambert > 0) 
-						{
-							ColorRGB radiance{ LightUtils::GetRadiance(lights[lightIndex], closestHit.origin) };
-							finalColor += (radiance* materials[closestHit.materialIndex]->Shade() *lambert);
+							continue;
 						}
 					}
+					
+					if (lambert <= 0)
+					{
+						continue;
+					}
+					
+
+					ColorRGB radiance{};
+					ColorRGB shade{};
+						
+					switch (m_LightingMode) {
+						case LightingMode::ObservedArea:
+							finalColor += ColorRGB{ 1,1,1 } *lambert;
+							break;
+						case LightingMode::Radiance:
+							finalColor += LightUtils::GetRadiance(lights[lightIndex], closestHit.origin) ;
+							break;
+						case LightingMode::BRDF:
+							shade = materials[closestHit.materialIndex]->Shade(closestHit,dirToLight,-rayDir);
+							finalColor += shade;
+							break;
+						case LightingMode::Combined:
+							radiance = LightUtils::GetRadiance(lights[lightIndex], closestHit.origin);
+							shade = materials[closestHit.materialIndex]->Shade(closestHit,dirToLight,-rayDir);
+							finalColor += (radiance * shade * lambert);
+							break;
+						}
 				}
+				
 			}
 
 			//Update Color in Buffer
