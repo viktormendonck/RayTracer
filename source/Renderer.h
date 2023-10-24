@@ -24,10 +24,10 @@ namespace dae
 		bool SaveBufferToImage() const;
 		void CycleLightingMode();
 		void ToggleShadows() { m_ShadowsEnabled = !m_ShadowsEnabled; }
+		void ToggleToneMap() { m_ToneMapEnabled = !m_ToneMapEnabled; }
 
 
 	private:
-
 		enum class LightingMode
 		{
 			ObservedArea,
@@ -39,6 +39,7 @@ namespace dae
 		LightingMode m_LightingMode{ LightingMode::Combined };
 
 		bool m_ShadowsEnabled{ true };
+		bool m_ToneMapEnabled{ true };
 
 		SDL_Window* m_pWindow{};
 
@@ -47,6 +48,5 @@ namespace dae
 
 		int m_Width{};
 		int m_Height{};
-
 	};
 }

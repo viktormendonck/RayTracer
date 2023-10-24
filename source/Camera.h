@@ -22,7 +22,8 @@ namespace dae
 		Vector3 origin{};
 
 		float fovAngle{90.f};
-		float speed{20.f};
+		const float speed{10.f};
+		const float mouseSpeed{.1f};
 
 		Vector3 forward{Vector3::UnitZ};
 		Vector3 up{Vector3::UnitY};
@@ -32,7 +33,6 @@ namespace dae
 
 		float totalYaw {0.f};
 
-		
 
 		Matrix cameraToWorld{};
 
@@ -85,8 +85,8 @@ namespace dae
 			
 			if (rightMouse && !leftMouse) 
 			{
-				totalPitch += deltaTime * -mouseY;
-				totalYaw += deltaTime * mouseX;
+				totalPitch += deltaTime * -mouseY * mouseSpeed;
+				totalYaw += deltaTime * mouseX * mouseSpeed;
 			}
 			
 			if (leftMouse && !rightMouse) 

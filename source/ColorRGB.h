@@ -15,6 +15,7 @@ namespace dae
 			if (maxValue > 1.f)
 				*this /= maxValue;
 		}
+		
 
 		static ColorRGB Lerp(const ColorRGB& c1, const ColorRGB& c2, float factor)
 		{
@@ -125,6 +126,12 @@ namespace dae
 		{
 			return *this /= s;
 		}
+		inline void Hable()
+		{
+			this->r = HableF(this->r);
+			this->g = HableF(this->g);
+			this->b = HableF(this->b);
+		}
 		#pragma endregion
 	};
 
@@ -146,4 +153,7 @@ namespace dae
 		static ColorRGB Black{ 0,0,0 };
 		static ColorRGB Gray{ 0.5f,0.5f,0.5f };
 	}
+
+	
+	//it doesnt see it as a member tho, you just saw
 }

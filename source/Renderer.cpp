@@ -12,7 +12,6 @@
 #include <iostream>
 
 
-
 using namespace dae;
 
 Renderer::Renderer(SDL_Window * pWindow) :
@@ -34,9 +33,9 @@ void Renderer::Render(Scene* pScene) const
 	camera.CalculateCameraToWorld();
 	float ar{ static_cast<float>(m_Width) / static_cast<float>(m_Height) };
 
-	for (int px{}; px < m_Width; ++px)
+	for (int px{}; px < m_Width; px += 1)
 	{
-		for (int py{}; py < m_Height; ++py)
+		for (int py{}; py < m_Height; py += 1)
 		{	
 			float cameraX{ (2.f * ((px + 0.5f) / m_Width) - 1.f) * ar * fov };
 			float cameraY{ (1.f - (2.f * (py + 0.5f)/ m_Height)) * fov };
@@ -94,13 +93,21 @@ void Renderer::Render(Scene* pScene) const
 							shade = materials[closestHit.materialIndex]->Shade(closestHit,dirToLight,-rayDir);
 							finalColor += (radiance * shade * lambert);
 							break;
-						}
+					}
 				}
 				
 			}
 
 			//Update Color in Buffer
-			finalColor.MaxToOne();
+			//Tone Mapping :)
+			if (m_ToneMapEnabled) 
+			{
+				finalColor.Hable();
+			}
+			else
+			{
+				finalColor.MaxToOne();
+			}
 
 			m_pBufferPixels[px + (py * m_Width)] = SDL_MapRGB(m_pBuffer->format,
 				static_cast<uint8_t>(finalColor.r * 255),
@@ -123,6 +130,7 @@ void dae::Renderer::CycleLightingMode()
 {
 	m_LightingMode = static_cast<LightingMode>((static_cast<int>(m_LightingMode) + 1) % 4);
 }
+
 
 //bool dae::Renderer::LightHitCheck(const Ray& ray) const
 //{

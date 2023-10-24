@@ -123,20 +123,37 @@ namespace dae
 
 		void CalculateNormals()
 		{
-			assert(false && "No Implemented Yet!");
+			normals.clear();
+			normals.reserve(indices.size());
+			int amountOfTriangles{static_cast<int>( indices.size()) / 3 };
+			for (int i{}; i < amountOfTriangles; ++i) 
+			{
+				const Vector3 l1{positions[indices[i * 3]] - positions[indices[i * 3 + 1]]};
+				const Vector3 l2{positions[indices[i * 3 + 1]] - positions[indices[i * 3 + 2]] };
+
+				const Vector3 normal{ Vector3::Cross(l1,l2).Normalized() };
+				normals.emplace_back(normal);
+			}
 		}
 
 		void UpdateTransforms()
 		{
-			assert(false && "No Implemented Yet!");
-			//Calculate Final Transform 
-			//const auto finalTransform = ...
+			const auto finalTransform = scaleTransform * rotationTransform * translationTransform;
 
-			//Transform Positions (positions > transformedPositions)
-			//...
+			transformedPositions.clear();
+			transformedPositions.reserve(positions.size());
+		
+			for (auto position : positions)
+			{
+				transformedPositions.emplace_back(finalTransform.TransformPoint(position));
+			}
 
-			//Transform Normals (normals > transformedNormals)
-			//...
+			transformedNormals.clear();
+			transformedNormals.reserve(normals.size());
+			for (auto normal : normals)
+			{
+				transformedNormals.emplace_back(rotationTransform.TransformVector(normal));
+			}
 		}
 	};
 #pragma endregion

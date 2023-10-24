@@ -13,5 +13,6 @@ public:
 	Scene_W3& operator=(Scene_W3&&) noexcept = delete;
 
 	void Initialize() override;
+
 };
 
