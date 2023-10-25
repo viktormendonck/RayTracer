@@ -48,7 +48,6 @@ namespace dae
 		std::vector<Plane> m_PlaneGeometries{};
 		std::vector<Sphere> m_SphereGeometries{};
 		std::vector<TriangleMesh> m_TriangleMeshGeometries{};
-		//std::vector<Triangle> m_TriangleGeometries{};
 		std::vector<Light> m_Lights{};
 		std::vector<Material*> m_Materials{};
 

@@ -10,7 +10,8 @@
 #include "Scene.h"
 #include "Utils.h"
 #include <iostream>
-
+#include "execution"
+#define PARALLEL_EXECUTION
 
 using namespace dae;
 
@@ -26,12 +27,25 @@ Renderer::Renderer(SDL_Window * pWindow) :
 void Renderer::Render(Scene* pScene) const
 {
 	Camera& camera = pScene->GetCamera();
+	camera.CalculateCameraToWorld();
+	float fov{ std::tanf(camera.fovAngle * PI / 180.f / 2.f) };
+	float ar{ static_cast<float>(m_Width) / static_cast<float>(m_Height) };
+
+//multithread
+#if defined(PARALLEL_EXECUTION)
+	uint32_t amountOfPixels{ uint32_t(m_Width * m_Height) };
+	std::vector<uint32_t> pixelIndices{};
+
+	pixelIndices.reserve(amountOfPixels);
+	for (uint32_t index{}; index < amountOfPixels; ++index) pixelIndices.emplace_back(index);
+	std::for_each(std::execution::par, pixelIndices.begin(), pixelIndices.end(), [&](int index)
+	{
+		RenderPixel(pScene, index, fov, ar, camera.cameraToWorld, camera.origin);
+	});
+//no multithread
+#else
 	auto& materials = pScene->GetMaterials();
 	auto& lights = pScene->GetLights();
-
-	float fov{ std::tanf(camera.fovAngle * PI / 180.f / 2.f) };
-	camera.CalculateCameraToWorld();
-	float ar{ static_cast<float>(m_Width) / static_cast<float>(m_Height) };
 
 	for (int px{}; px < m_Width; px += 1)
 	{
@@ -72,7 +86,6 @@ void Renderer::Render(Scene* pScene) const
 					{
 						continue;
 					}
-					
 
 					ColorRGB radiance{};
 					ColorRGB shade{};
@@ -115,10 +128,97 @@ void Renderer::Render(Scene* pScene) const
 				static_cast<uint8_t>(finalColor.b * 255));
 		}
 	}
-
-	//@END
+#endif
 	//Update SDL Surface
 	SDL_UpdateWindowSurface(m_pWindow);
+}
+
+void Renderer::RenderPixel(Scene* pScene, uint32_t pixelIndex, float fov, float ar, const Matrix cameraToWorld, const Vector3 cameraOrigin) const
+{
+	Camera& camera = pScene->GetCamera();
+	auto materials{ pScene->GetMaterials() };
+	auto& lights = pScene->GetLights();
+
+	const uint32_t px{ pixelIndex % m_Width }, py{ pixelIndex / m_Width };
+
+	float rx{ static_cast<float>(px) + 0.5f }, ry{ static_cast<float>(py) + 0.5f };
+	float cx{ (2 * (rx / static_cast<float>(m_Width)) - 1) };
+	float cy{ (1 - (2 * (ry / static_cast<float>(m_Height)))) * fov };
+
+
+	float cameraX{ (2.f * ((px + 0.5f) / m_Width) - 1.f) * ar * fov };
+	float cameraY{ (1.f - (2.f * (py + 0.5f) / m_Height)) * fov };
+
+	Vector3 rayDir{ (camera.forward + (camera.right * cameraX) + (camera.up * cameraY)) };
+	const float magnitude = rayDir.Normalize();
+
+	Ray viewRay{ camera.origin,rayDir };
+	ColorRGB finalColor{};
+	HitRecord closestHit{};
+
+	pScene->GetClosestHit(viewRay, closestHit);
+
+	if (closestHit.didHit)
+	{
+
+		for (int lightIndex{ 0 }; lightIndex < lights.size(); ++lightIndex)
+		{
+			Vector3 dirToLight{ LightUtils::GetDirectionToLight(lights[lightIndex], closestHit.origin) };
+			float lightDist{ dirToLight.Normalize() };
+			float lambert = Vector3::Dot(closestHit.normal, dirToLight);
+
+
+			if (m_ShadowsEnabled)
+			{
+				Ray shadowRay{ closestHit.origin + closestHit.normal * 0.001f,dirToLight,0.f,lightDist };
+				if (pScene->DoesHit(shadowRay))
+				{
+					continue;
+				}
+			}
+
+			if (lambert <= 0)
+			{
+				continue;
+			}
+
+			ColorRGB radiance{};
+			ColorRGB shade{};
+
+			switch (m_LightingMode) {
+			case LightingMode::ObservedArea:
+				finalColor += ColorRGB{ 1,1,1 } *lambert;
+				break;
+			case LightingMode::Radiance:
+				finalColor += LightUtils::GetRadiance(lights[lightIndex], closestHit.origin);
+				break;
+			case LightingMode::BRDF:
+				shade = materials[closestHit.materialIndex]->Shade(closestHit, dirToLight, -rayDir);
+				finalColor += shade;
+				break;
+			case LightingMode::Combined:
+				radiance = LightUtils::GetRadiance(lights[lightIndex], closestHit.origin);
+				shade = materials[closestHit.materialIndex]->Shade(closestHit, dirToLight, -rayDir);
+				finalColor += (radiance * shade * lambert);
+				break;
+			}
+		}
+	}
+	//Update Color in Buffer
+			//Tone Mapping :)
+	if (m_ToneMapEnabled)
+	{
+		finalColor.Hable();
+	}
+	else
+	{
+		finalColor.MaxToOne();
+	}
+
+	m_pBufferPixels[px + (py * m_Width)] = SDL_MapRGB(m_pBuffer->format,
+		static_cast<uint8_t>(finalColor.r * 255),
+		static_cast<uint8_t>(finalColor.g * 255),
+		static_cast<uint8_t>(finalColor.b * 255));
 }
 
 bool Renderer::SaveBufferToImage() const

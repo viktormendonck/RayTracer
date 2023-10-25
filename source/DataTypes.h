@@ -138,19 +138,19 @@ namespace dae
 
 		void UpdateTransforms()
 		{
-			const auto finalTransform = scaleTransform * rotationTransform * translationTransform;
+			Matrix finalTransform = scaleTransform * rotationTransform * translationTransform;
 
 			transformedPositions.clear();
 			transformedPositions.reserve(positions.size());
 		
-			for (auto position : positions)
+			for (Vector3 position : positions)
 			{
 				transformedPositions.emplace_back(finalTransform.TransformPoint(position));
 			}
 
 			transformedNormals.clear();
 			transformedNormals.reserve(normals.size());
-			for (auto normal : normals)
+			for (Vector3 normal : normals)
 			{
 				transformedNormals.emplace_back(rotationTransform.TransformVector(normal));
 			}

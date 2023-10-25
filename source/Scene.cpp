@@ -35,7 +35,7 @@ namespace dae {
 		{
 			if (GeometryUtils::HitTest_Sphere(sphere, ray, hitRecord))
 			{
-				if (hitRecord.t <= closestHit.t)
+				if (hitRecord.t < closestHit.t)
 				{
 					closestHit = hitRecord;
 				}

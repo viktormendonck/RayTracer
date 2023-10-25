@@ -1,9 +1,12 @@
 #include "Scene_W4.h"
 #include "Material.h"
+#include "utils.h"
+
 
 Scene_W4::~Scene_W4()
 {
-	delete m_MeshPtr;
+	//do not delete pointers
+	//it is evil :3
 }
 
 void Scene_W4::Initialize()
@@ -33,38 +36,37 @@ void Scene_W4::Initialize()
 
 	//Triangle Mesh
 	//=============
-	m_MeshPtr = AddTriangleMesh(dae::TriangleCullMode::NoCulling, matLambert_White);
-	m_MeshPtr->positions = {
-		{-.75f,-1.f, 0.f},   //V0
-		{-.75f, 1.f, 0.f},   //V2
-		{ .75f, 1.f, 1.f },  //V3
-		{ .75f,-1.f, 0.f} }; //V4
-	
-	m_MeshPtr->indices = {
-		0,1,2, //Triangle 1
-		0,2,3  //Triangle 2
-	};
-	
-	m_MeshPtr->CalculateNormals();
-	
-	m_MeshPtr->Translate({ 0.f,1.5f,0.f });
-	m_MeshPtr->UpdateTransforms();
+	//m_MeshPtr = AddTriangleMesh(dae::TriangleCullMode::NoCulling, matLambert_White);
+	//m_MeshPtr->positions = {
+	//	{-.75f,-1.f, 0.f},   //V0
+	//	{-.75f, 1.f, 0.f},   //V1
+	//	{ .75f, 1.f, 1.f },  //V2 
+	//	{ .75f,-1.f, 0.f} }; //V3
+	//m_MeshPtr->indices = {
+	//	0,1,2, //Triangle 1
+	//	0,2,3  //Triangle 2
+	//};
+	//
+	//m_MeshPtr->CalculateNormals();
+	//
+	//m_MeshPtr->Translate({ 0.f,1.5f,0.f });
+	//m_MeshPtr->UpdateTransforms();
 
 	////OBJ
 	////===
-	//pMesh = AddTriangleMesh(TriangleCullMode::BackFaceCulling, matLambert_White);
-	//Utils::ParseOBJ("Resources/simple_cube.obj",
-	////Utils::ParseOBJ("Resources/simple_object.obj",
-	//	pMesh->positions, 
-	//	pMesh->normals, 
-	//	pMesh->indices);
+	m_MeshPtr = AddTriangleMesh(dae::TriangleCullMode::BackFaceCulling, matLambert_White);
+	//dae::Utils::ParseOBJ("Resources/simple_cube.obj",
+	dae::Utils::ParseOBJ("Resources/lowpoly_bunny2.obj",
+		m_MeshPtr->positions, 
+		m_MeshPtr->normals, 
+		m_MeshPtr->indices);
 
-	////No need to Calculate the normals, these are calculated inside the ParseOBJ function
-	//pMesh->UpdateTransforms();
+	//No need to Calculate the normals, these are calculated inside the ParseOBJ function
 
-	//pMesh->Scale({ .7f,.7f,.7f });
-	//pMesh->Translate({ .0f,1.f,0.f });
+	m_MeshPtr->Scale({ 1.5f,1.5f,1.5f });
+	m_MeshPtr->Translate({ .0f,.5f,0.f });
 
+	m_MeshPtr->UpdateTransforms();
 
 	//Light
 	AddPointLight(dae::Vector3{ 0.f, 5.f, 5.f }, 150.f, dae::ColorRGB{ 1.f, .61f, .45f }); //Backlight

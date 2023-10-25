@@ -111,8 +111,7 @@ namespace dae
 
 			if (AreEqual(dot, 0)) return false;
 			
-			Vector3 center = (triangle.v0 - triangle.v1 - triangle.v2);
-			Vector3 l(center - ray.origin);
+			Vector3 l(triangle.v0 - ray.origin);
 
 			float t { (Vector3::Dot(l,triangle.normal) / Vector3::Dot(ray.direction,triangle.normal)) };
 
@@ -120,26 +119,20 @@ namespace dae
 			{
 				return false;
 			}
-			if (triangle.cullMode == TriangleCullMode::BackFaceCulling && dot < 0.f) 
+			if (triangle.cullMode == TriangleCullMode::FrontFaceCulling && dot < 0.f) 
 			{
 				return false;
 			}
-			if (triangle.cullMode == TriangleCullMode::FrontFaceCulling && dot > 0.f) 
+			if (triangle.cullMode == TriangleCullMode::BackFaceCulling && dot > 0.f) 
 			{
 				return false;
 			}
 
 			Vector3 p{ ray.origin + ray.direction * t };
 			
-			if (HitTest_RightSideOfLine(p, triangle.v0, triangle.v1, triangle.normal)) 
-			{
-				return false;
-			}
-			if (HitTest_RightSideOfLine(p, triangle.v1, triangle.v2, triangle.normal))
-			{
-				return false;
-			}
-			if (HitTest_RightSideOfLine(p, triangle.v2, triangle.v0, triangle.normal))
+			if (HitTest_RightSideOfLine(p, triangle.v0, triangle.v1, triangle.normal) || 
+				HitTest_RightSideOfLine(p, triangle.v1, triangle.v2, triangle.normal) ||
+				HitTest_RightSideOfLine(p, triangle.v2, triangle.v0, triangle.normal))
 			{
 				return false;
 			}
@@ -161,8 +154,7 @@ namespace dae
 
 			if (AreEqual(dot, 0)) return false;
 
-			Vector3 center = (triangle.v0 - triangle.v1 - triangle.v2);
-			Vector3 l(center - ray.origin);
+			Vector3 l(triangle.v0 - ray.origin);
 
 			float t{ (Vector3::Dot(l,triangle.normal) / Vector3::Dot(ray.direction,triangle.normal)) };
 
@@ -170,11 +162,11 @@ namespace dae
 			{
 				return false;
 			}
-			if (triangle.cullMode == TriangleCullMode::BackFaceCulling && dot >= 0.f)
+			if (triangle.cullMode == TriangleCullMode::FrontFaceCulling && dot > 0.f)
 			{
 				return false;
 			}
-			if (triangle.cullMode == TriangleCullMode::FrontFaceCulling && dot <= 0.f)
+			if (triangle.cullMode == TriangleCullMode::BackFaceCulling && dot < 0.f)
 			{
 				return false;
 			}
