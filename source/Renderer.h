@@ -2,6 +2,7 @@
 
 #include <cstdint>
 #include "Matrix.h"
+#include <vector>
 
 
 
@@ -53,6 +54,7 @@ namespace dae
 
 		SDL_Surface* m_pBuffer{};
 		uint32_t* m_pBufferPixels{};
+		std::vector<int> m_PixelIndices{};
 
 		int m_Width{};
 		int m_Height{};

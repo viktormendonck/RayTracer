@@ -12,7 +12,7 @@ Scene_W4::~Scene_W4()
 void Scene_W4::Initialize()
 {
 	
-	m_Camera.origin = { 0.f,1.f,-5.f };
+	m_Camera.origin = { 0.f,3.f,-9.f };
 	m_Camera.fovAngle = 45.f;
 
 	//Materials
@@ -69,9 +69,9 @@ void Scene_W4::Initialize()
 	m_MeshPtr->UpdateTransforms();
 
 	//Light
-	AddPointLight(dae::Vector3{ 0.f, 5.f, 5.f }, 150.f, dae::ColorRGB{ 1.f, .61f, .45f }); //Backlight
-	AddPointLight(dae::Vector3{ -2.5f, 5.f, -5.f }, 170.f, dae::ColorRGB{ 1.f, .8f, .45f }); //Front Light Left
-	AddPointLight(dae::Vector3{ 2.5f, 2.5f, -5.f }, 150.f, dae::ColorRGB{ .34f, .47f, .68f });
+	AddPointLight(dae::Vector3{ 0.f, 5.f, 5.f }, 50.f, dae::ColorRGB{ 1.f, .61f, .45f }); //Backlight
+	AddPointLight(dae::Vector3{ -2.5f, 5.f, -5.f }, 70.f, dae::ColorRGB{ 1.f, .8f, .45f }); //Front Light Left
+	AddPointLight(dae::Vector3{ 2.5f, 2.5f, -5.f }, 50.f, dae::ColorRGB{ .34f, .47f, .68f });
 }
 
 void Scene_W4::Update(dae::Timer* pTimer)

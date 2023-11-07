@@ -83,10 +83,10 @@ namespace dae
 		 */
 		static float GeometryFunction_SchlickGGX(const Vector3& n, const Vector3& v, float roughness)
 		{
-			const float dot{ Vector3::Dot(n,v) };
 			const float k{Square((roughness*roughness)+1.f)/8.f};
+			const float dot{ Vector3::Dot(n,v) };
 			const float val{ dot * (1 - k) + k };
-			return {dot/roughness};
+			return {dot/val};
 		}
 
 		/**
