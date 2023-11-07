@@ -61,11 +61,11 @@ void Scene_W4::Initialize()
 		m_MeshPtr->normals, 
 		m_MeshPtr->indices);
 
-	//No need to Calculate the normals, these are calculated inside the ParseOBJ function
 
-	m_MeshPtr->Scale({ 1.5f,1.5f,1.5f });
-	m_MeshPtr->Translate({ .0f,.5f,0.f });
+	m_MeshPtr->Scale({ 2.f,2.f,2.f });
+	m_MeshPtr->Translate({ .0f,.0f,0.f });
 
+	m_MeshPtr->UpdateAABB();
 	m_MeshPtr->UpdateTransforms();
 
 	//Light
@@ -73,3 +73,12 @@ void Scene_W4::Initialize()
 	AddPointLight(dae::Vector3{ -2.5f, 5.f, -5.f }, 170.f, dae::ColorRGB{ 1.f, .8f, .45f }); //Front Light Left
 	AddPointLight(dae::Vector3{ 2.5f, 2.5f, -5.f }, 150.f, dae::ColorRGB{ .34f, .47f, .68f });
 }
+
+void Scene_W4::Update(dae::Timer* pTimer)
+{
+	Scene::Update(pTimer);
+
+	m_MeshPtr->RotateY(std::sinf(pTimer->GetTotal() * m_MeshRotationSpeed) * 2 * dae::PI);
+	m_MeshPtr->UpdateTransforms();
+}
+

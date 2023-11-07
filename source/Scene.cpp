@@ -2,7 +2,7 @@
 #include "Utils.h"
 #include "Material.h"
 #include <iostream>
-
+#define moeller
 namespace dae {
 
 #pragma region Base Scene
@@ -96,10 +96,13 @@ namespace dae {
 		}
 		for (size_t i{}; i < m_TriangleMeshGeometries.size(); ++i)
 		{
+		
 			if (GeometryUtils::DoesHit_TriangleMesh(m_TriangleMeshGeometries[i], ray))
 			{
 				return true;
 			}
+		
+
 		}
 
 		return false;

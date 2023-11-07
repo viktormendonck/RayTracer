@@ -14,8 +14,8 @@
 //#include "Scene_W1.h"
 //#include "Scene_W2.h"
 //#include "Scene_W3.h"
-#include "Scene_W4.h"
-
+//#include "Scene_W4.h"
+#include "SceneREFERENCE.h"
 using namespace dae;
 
 
@@ -53,7 +53,7 @@ int main(int argc, char* args[])
 	const auto pTimer = new Timer();
 	const auto pRenderer = new Renderer(pWindow);
 
-	const auto pScene = new Scene_W4();
+	const auto pScene = new SceneREFERENCE();
 	pScene->Initialize();
 
 	//Start loop

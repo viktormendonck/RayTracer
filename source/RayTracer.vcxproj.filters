@@ -12,6 +12,9 @@
     <Filter Include="scenes">
       <UniqueIdentifier>{a4b0bc44-77b6-4064-b465-9467df3abf60}</UniqueIdentifier>
     </Filter>
+    <Filter Include="scenes\final">
+      <UniqueIdentifier>{9791bd3b-b204-4398-8833-b4f484e10f97}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="RayTracer.props" />
@@ -69,6 +72,9 @@
     <ClInclude Include="Scene_W4.h">
       <Filter>scenes</Filter>
     </ClInclude>
+    <ClInclude Include="SceneREFERENCE.h">
+      <Filter>scenes\final</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -99,6 +105,9 @@
     </ClCompile>
     <ClCompile Include="Scene_W4.cpp">
       <Filter>scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneREFERENCE.cpp">
+      <Filter>scenes\final</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

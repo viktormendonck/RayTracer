@@ -47,7 +47,7 @@ namespace dae
 		LightingMode m_LightingMode{ LightingMode::Combined };
 
 		bool m_ShadowsEnabled{ true };
-		bool m_ToneMapEnabled{ true };
+		bool m_ToneMapEnabled{ false };
 
 		SDL_Window* m_pWindow{};
 
