@@ -44,39 +44,41 @@ void Renderer::Render(Scene* pScene) const
 #ifdef PARALLEL_EXECUTION
 	std::for_each(std::execution::par, m_PixelIndices.begin(), m_PixelIndices.end(), [&](int index)
 {
-			RenderPixel(pScene, index, fov, ar, camera.cameraToWorld, camera.origin);
+			RenderPixel(pScene, index, fov, ar);
 });
 #else
 	int pixelCount{ m_Width * m_Height };
 	for (int i{ 0 }; i < pixelCount; ++i)
 	{
-		RenderPixel(pScene, i, fov, ar, camera.cameraToWorld, camera.origin);
+		RenderPixel(pScene, i, fov, ar);
 	}
 #endif
 	//Update SDL Surface
 	SDL_UpdateWindowSurface(m_pWindow);
 }
 
-void Renderer::RenderPixel(Scene* pScene, uint32_t pixelIndex, float fov, float ar, const Matrix cameraToWorld, const Vector3 cameraOrigin) const
+void Renderer::RenderPixel(Scene* pScene, uint32_t pixelIndex, float fov, float ar) const
 {
 	Camera& camera = pScene->GetCamera();
 	auto materials{ pScene->GetMaterials() };
 	auto& lights = pScene->GetLights();
 
+	
+
 	const uint32_t px{ pixelIndex % m_Width }, py{ pixelIndex / m_Width };
 
-	float rx{ static_cast<float>(px) + 0.5f }, ry{ static_cast<float>(py) + 0.5f };
-	float cx{ (2 * (rx / static_cast<float>(m_Width)) - 1) };
-	float cy{ (1 - (2 * (ry / static_cast<float>(m_Height)))) * fov };
+	const float rx{ static_cast<float>(px) + 0.5f }, ry{ static_cast<float>(py) + 0.5f };
+	const float cx{ (2 * (rx / static_cast<float>(m_Width)) - 1) };
+	const float cy{ (1 - (2 * (ry / static_cast<float>(m_Height)))) * fov };
 
 
-	float cameraX{ (2.f * ((px + 0.5f) / m_Width) - 1.f) * ar * fov };
-	float cameraY{ (1.f - (2.f * (py + 0.5f) / m_Height)) * fov };
+	const float cameraX{ (2.f * ((px + 0.5f) / m_Width) - 1.f) * ar * fov };
+	const float cameraY{ (1.f - (2.f * (py + 0.5f) / m_Height)) * fov };
 
 	Vector3 rayDir{ (camera.forward + (camera.right * cameraX) + (camera.up * cameraY)) };
 	const float magnitude = rayDir.Normalize();
 
-	Ray viewRay{ camera.origin,rayDir };
+	const Ray viewRay{ camera.origin,rayDir };
 	ColorRGB finalColor{};
 	HitRecord closestHit{};
 
@@ -88,13 +90,13 @@ void Renderer::RenderPixel(Scene* pScene, uint32_t pixelIndex, float fov, float 
 		for (int lightIndex{ 0 }; lightIndex < lights.size(); ++lightIndex)
 		{
 			Vector3 dirToLight{ LightUtils::GetDirectionToLight(lights[lightIndex], closestHit.origin) };
-			float lightDist{ dirToLight.Normalize() };
-			float lambert = Vector3::Dot(closestHit.normal, dirToLight);
+			const float lightDist{ dirToLight.Normalize() };
+			const float lambert = Vector3::Dot(closestHit.normal, dirToLight);
 
 
 			if (m_ShadowsEnabled)
 			{
-				Ray shadowRay{ closestHit.origin + closestHit.normal * 0.001f,dirToLight,0.f,lightDist };
+				const Ray shadowRay{ closestHit.origin + closestHit.normal * 0.001f,dirToLight,0.f,lightDist };
 				if (pScene->DoesHit(shadowRay))
 				{
 					continue;
@@ -154,9 +156,3 @@ void dae::Renderer::CycleLightingMode()
 {
 	m_LightingMode = static_cast<LightingMode>((static_cast<int>(m_LightingMode) + 1) % 4);
 }
-
-
-//bool dae::Renderer::LightHitCheck(const Ray& ray) const
-//{
-//	return false;
-//}

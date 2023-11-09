@@ -1,17 +1,17 @@
-#include "Scene_W4.h"
+#include "SceneEXTRA.h"
 #include "Material.h"
 #include "utils.h"
 
 
-Scene_W4::~Scene_W4()
+SceneEXTRA::~SceneEXTRA()
 {
 	//do not delete pointers
 	//it is evil :3
 }
 
-void Scene_W4::Initialize()
+void SceneEXTRA::Initialize()
 {
-	
+
 	m_Camera.origin = { 0.f,3.f,-9.f };
 	m_Camera.fovAngle = 45.f;
 
@@ -26,15 +26,39 @@ void Scene_W4::Initialize()
 	AddPlane(dae::Vector3{ 5.f, 0.f, 0.f }, dae::Vector3{ -1.f, 0.f, 0.f }, matLambert_GrayBlue); //RIGHT
 	AddPlane(dae::Vector3{ -5.f, 0.f, 0.f }, dae::Vector3{ 1.f, 0.f, 0.f }, matLambert_GrayBlue); //LEFT
 
-	
+	//Triangle (Temp)
+	//===============
+	//auto triangle = dae::Triangle{ {-.75f,.5f,.0f},{-.75f,2.f, .0f}, {.75f,.5f,0.f} };
+	//triangle.cullMode = dae::TriangleCullMode::NoCulling;
+	//triangle.materialIndex = matLambert_White;
+	//
+	//m_TriangleGeometries.emplace_back(triangle);
+
+	//Triangle Mesh
+	//=============
+	//m_MeshPtr = AddTriangleMesh(dae::TriangleCullMode::NoCulling, matLambert_White);
+	//m_MeshPtr->positions = {
+	//	{-.75f,-1.f, 0.f},   //V0
+	//	{-.75f, 1.f, 0.f},   //V1
+	//	{ .75f, 1.f, 1.f },  //V2 
+	//	{ .75f,-1.f, 0.f} }; //V3
+	//m_MeshPtr->indices = {
+	//	0,1,2, //Triangle 1
+	//	0,2,3  //Triangle 2
+	//};
+	//
+	//m_MeshPtr->CalculateNormals();
+	//
+	//m_MeshPtr->Translate({ 0.f,1.5f,0.f });
+	//m_MeshPtr->UpdateTransforms();
 
 	////OBJ
 	////===
 	m_MeshPtr = AddTriangleMesh(dae::TriangleCullMode::BackFaceCulling, matLambert_White);
 	//dae::Utils::ParseOBJ("Resources/simple_cube.obj",
-	dae::Utils::ParseOBJ("Resources/lowpoly_bunny2.obj",
-		m_MeshPtr->positions, 
-		m_MeshPtr->normals, 
+	dae::Utils::ParseOBJ("Resources/apex_logo.obj",
+		m_MeshPtr->positions,
+		m_MeshPtr->normals,
 		m_MeshPtr->indices);
 
 
@@ -50,7 +74,7 @@ void Scene_W4::Initialize()
 	AddPointLight(dae::Vector3{ 2.5f, 2.5f, -5.f }, 50.f, dae::ColorRGB{ .34f, .47f, .68f });
 }
 
-void Scene_W4::Update(dae::Timer* pTimer)
+void SceneEXTRA::Update(dae::Timer* pTimer)
 {
 	Scene::Update(pTimer);
 

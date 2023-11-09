@@ -6,6 +6,7 @@
 
 
 
+
 struct SDL_Window;
 struct SDL_Surface;
 
@@ -28,7 +29,7 @@ namespace dae
 
 		void Render(Scene* pScene) const;
 		
-		void RenderPixel(Scene* pScene, uint32_t pixelIndex, float fov, float ar, const Matrix cameraToWorld, const Vector3 cameraOrigin) const;
+		void RenderPixel(Scene* pScene, uint32_t pixelIndex, float fov, float ar) const;
 
 		bool SaveBufferToImage() const;
 		void CycleLightingMode();

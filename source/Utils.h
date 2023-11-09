@@ -12,7 +12,7 @@ namespace dae
 	{
 #pragma region Sphere HitTest
 		//SPHERE HIT-TESTS
-		inline bool HitTest_Sphere(const Sphere& sphere, const Ray& ray, HitRecord& hitRecord)
+		inline bool HitTest_Sphere(const Sphere& sphere, const Ray& ray, HitRecord& hitRecord, bool ignoreHitRecord)
 		{
 			const Vector3 rayOriginToSphereOrigin{ sphere.origin - ray.origin };
 			const float hypotenuseSquared{ rayOriginToSphereOrigin.SqrMagnitude() };
@@ -32,96 +32,26 @@ namespace dae
 			if (t < ray.min || t > ray.max) {
 				return false;
 			}
-
-			hitRecord.didHit = true;
+			if (ignoreHitRecord) return true;
 			
+			hitRecord.didHit = true;
 			hitRecord.materialIndex = sphere.materialIndex;
 			hitRecord.t = t;
 			hitRecord.origin = ray.origin + t * ray.direction;
 			hitRecord.normal = Vector3(sphere.origin, hitRecord.origin) / sphere.radius;
 			return true;
-			////todo W1
-			//const Vector3 sphereToRay{ ray.origin - sphere.origin };
-			//const float b{ Vector3::Dot( ray.direction, sphereToRay) };
-			//const float hypoteneuseLength{ Vector3::Dot(sphereToRay, sphereToRay) };
-			//const float c{ hypoteneuseLength - (sphere.radius * sphere.radius) };
-			//
-			//if (-hypoteneuseLength >= (sphere.radius * sphere.radius)) 
-			//{
-			//	return false;
-			//}
-			//
-			//const float discriminant{ b * b -  c };
-			//
-			//if (discriminant <= 0)
-			//{
-			//	return false;
-			//}
-			//
-			//float t = (-b - sqrtf(discriminant));
-			//
-			//if (t <= ray.min || t > ray.max)
-			//{
-			//	return false;
-			//}
-			//
-			//hitRecord.t = t;
-			//hitRecord.didHit = true;
-			//hitRecord.origin = ray.origin + hitRecord.t * ray.direction;
-			//hitRecord.normal = (hitRecord.origin - sphere.origin).Normalized();
-			//hitRecord.materialIndex = sphere.materialIndex;
-			//
-			//
-			//return hitRecord.didHit;
-
-
 		}
-
-		inline bool DoesHit_Sphere(const Sphere& sphere, const Ray& ray)
+		inline bool HitTest_Sphere(const Sphere& sphere, const Ray& ray) 
 		{
-			const Vector3 rayOriginToSphereOrigin{ sphere.origin - ray.origin };
-			const float hypotenuseSquared{ rayOriginToSphereOrigin.SqrMagnitude() };
-			const float side1{ Vector3::Dot(rayOriginToSphereOrigin, ray.direction) };
-
-			const float distanceToRaySquared = hypotenuseSquared - side1 * side1;
-
-			//if the distance to the ray is larger than the radius there will be no results
-			//    also if equal because that is the exact border of the circle
-			if (distanceToRaySquared >= sphere.radius * sphere.radius) {
-				return false;
-			}
-
-			const float distanceRaypointToIntersect = sqrt(sphere.radius * sphere.radius - distanceToRaySquared);
-			const float t = side1 - distanceRaypointToIntersect;
-
-			if (t < ray.min || t > ray.max) {
-				return false;
-			}
-			return true;
-			//const Vector3 sphereToRay{ ray.origin - sphere.origin };
-			//const float b{ Vector3::Dot(ray.direction, sphereToRay) };
-			//const float c{ Vector3::Dot(sphereToRay, sphereToRay) - (sphere.radius * sphere.radius) };
-			//const float discriminant{ b * b - c };
-			//
-			//if (discriminant <= 0)
-			//{
-			//	return false;
-			//}
-			//
-			//float t = (-b - sqrtf(discriminant));
-			//
-			//if (t <= ray.min || t > ray.max)
-			//{
-			//	return false;
-			//}
-			//return true;
+			HitRecord temp{};
+			return HitTest_Sphere(sphere, ray, temp, true);
 		}
 
 #pragma endregion
 
 #pragma region Plane HitTest
 		//PLANE HIT-TESTS
-		inline bool HitTest_Plane(const Plane& plane, const Ray& ray, HitRecord& hitRecord)
+		inline bool HitTest_Plane(const Plane& plane, const Ray& ray, HitRecord& hitRecord, bool ignoreHitRecord)
 		{
 			const float denom = Vector3::Dot(ray.direction,plane.normal);
 			const float t = Vector3::Dot((plane.origin - ray.origin), plane.normal) / denom;
@@ -129,7 +59,8 @@ namespace dae
 			{
 				return false;
 			}  
-			
+			if (ignoreHitRecord) return true;
+
 			hitRecord.didHit = true;
 			hitRecord.t = t;
  			hitRecord.origin = ray.origin + t * ray.direction;
@@ -138,28 +69,24 @@ namespace dae
 			
 			return true;
 		}
-
-		inline bool DoesHit_Plane(const Plane& plane, const Ray& ray)
+		inline bool HitTest_Plane(const Plane& plane, const Ray& ray) 
 		{
-			const float denom = Vector3::Dot(ray.direction, plane.normal);
-			const float t = Vector3::Dot((plane.origin - ray.origin), plane.normal) / denom;
-			if (t <= ray.min || t > ray.max) 
-			{
-				return false;
-			}
-			return true;
+			HitRecord temp{};
+			return HitTest_Plane(plane, ray, temp, true);
 		}
+		
 		
 #pragma endregion
 #pragma region Triangle HitTest
 		inline bool HitTest_RightSideOfLine(const Vector3& p, const Vector3& v0, const Vector3& v1, const Vector3& n)
 		{
+			bool b{};
 			const Vector3 e{ v1 - v0 };
 			const Vector3 cross{ Vector3::Cross(e, p - v0) };
 			return Vector3::Dot(cross, n) <= 0;
 		}
 		//TRIANGLE HIT-TESTS
-		inline bool HitTest_Triangle(const Triangle& triangle, const Ray& ray, HitRecord& hitRecord)
+		inline bool HitTest_Triangle(const Triangle& triangle, const Ray& ray, HitRecord& hitRecord, bool ignoreHitRecord)
 		{
 			const float dot{ Vector3::Dot(triangle.normal, ray.direction) };
 
@@ -173,12 +100,13 @@ namespace dae
 			{
 				return false;
 			}
-			if (triangle.cullMode == TriangleCullMode::FrontFaceCulling && dot < 0.f) 
+			if (triangle.cullMode == TriangleCullMode::FrontFaceCulling) 
 			{
-				return false;
+				if ((!ignoreHitRecord && dot < 0.f )|| (ignoreHitRecord && dot > 0.f))return false;
 			}
-			if (triangle.cullMode == TriangleCullMode::BackFaceCulling && dot > 0.f) 
+			if (triangle.cullMode == TriangleCullMode::BackFaceCulling) 
 			{
+				if ((!ignoreHitRecord && dot > 0.f) || (ignoreHitRecord && dot < 0.f))return false;
 				return false;
 			}
 
@@ -190,6 +118,7 @@ namespace dae
 			{
 				return false;
 			}
+			if (ignoreHitRecord) return true;
 
 			hitRecord.didHit = true;
 			hitRecord.origin = p;
@@ -201,48 +130,9 @@ namespace dae
 			
 		}
 
-		inline bool DoesHit_Triangle (const Triangle& triangle, const Ray& ray)
-		{
+		
 
-			const float dot{ Vector3::Dot(triangle.normal, ray.direction) };
-
-			if (AreEqual(dot, 0)) return false;
-
-			const Vector3 l(triangle.v0 - ray.origin);
-
-			const float t{ (Vector3::Dot(l,triangle.normal) / Vector3::Dot(ray.direction,triangle.normal)) };
-
-			if (t < ray.min || t > ray.max)
-			{
-				return false;
-			}
-			if (triangle.cullMode == TriangleCullMode::FrontFaceCulling && dot > 0.f)
-			{
-				return false;
-			}
-			if (triangle.cullMode == TriangleCullMode::BackFaceCulling && dot < 0.f)
-			{
-				return false;
-			}
-
-			const Vector3 p{ ray.origin + ray.direction * t };
-
-			if (HitTest_RightSideOfLine(p, triangle.v0, triangle.v1, triangle.normal))
-			{
-				return false;
-			}
-			if (HitTest_RightSideOfLine(p, triangle.v1, triangle.v2, triangle.normal))
-			{
-				return false;
-			}
-			if (HitTest_RightSideOfLine(p, triangle.v2, triangle.v0, triangle.normal))
-			{
-				return false;
-			}
-			return true;
-		}
-
-		inline bool HitTest_TriangleMoeller(const Triangle& triangle, const Ray& ray, HitRecord& hitRecord)
+		inline bool HitTest_TriangleMoeller(const Triangle& triangle, const Ray& ray, HitRecord& hitRecord, bool ignoreHitRecord)
 		{
 			const float dot{ Vector3::Dot(triangle.normal, ray.direction) };
 			
@@ -271,6 +161,7 @@ namespace dae
 			const float t{ invF * Vector3::Dot(q,edge2) };
 			
 			if (t < ray.min || t > ray.max || t > hitRecord.t) { return false; }
+			if (ignoreHitRecord) return true;
 			
 			
 			hitRecord.t = t;
@@ -282,41 +173,7 @@ namespace dae
 			
 
 		}
-		inline bool DoesHit_TriangleMoeller(const Triangle& triangle, const Ray& ray)
-		{
-			const float dot{ Vector3::Dot(triangle.normal, ray.direction) };
-			
-			if (AreEqual(dot, 0)) { return false; }
-			
-			if (triangle.cullMode == TriangleCullMode::FrontFaceCulling && dot > 0.f) { return false; }
-			
-			if (triangle.cullMode == TriangleCullMode::BackFaceCulling && dot < 0.f){return false;}
-			
-			const Vector3 edge1{ triangle.v1 - triangle.v0 };
-			const Vector3 edge2{ triangle.v2 - triangle.v0 };
-			const Vector3 p{ Vector3::Cross(ray.direction,edge2) };
-			
-			const float f{ Vector3::Dot(p,edge1) };
-			if (AreEqual(f, 0)) { return false; }
-			
-			const float invF{ 1.f / f };
-			const Vector3 tVec{ ray.origin - triangle.v0 };
-			const float u{ invF * Vector3::Dot(p,tVec) };
-			if (u < 0.f || u>1.f) { return false; }
-			
-			const Vector3 q{ Vector3::Cross(tVec, edge1) };
-			const float v{ invF * Vector3::Dot(q ,ray.direction) };
-			
-			if (v < 0.f || u + v >1.f) { return false; }
-			
-			const float t{ invF * Vector3::Dot(q,edge2) };
-			
-			if (t < ray.min || t > ray.max) { return false; }
-			
-			return true;
-			
-			
-		}
+		
 
 #pragma endregion
 #pragma region TriangeMesh HitTest
@@ -343,13 +200,14 @@ namespace dae
 			return tmax > 0 && tmax >= tmin;
 		}
 
-		inline bool HitTest_TriangleMesh(const TriangleMesh& mesh, const Ray& ray, HitRecord& hitRecord)
+		inline bool HitTest_TriangleMesh(const TriangleMesh& mesh, const Ray& ray, HitRecord& hitRecord, bool ignoreHitRecord)
 		{
 			if (!SlabTest_TriangleMesh(mesh, ray)) { return false; }
-
-			dae::Triangle tri = Triangle({}, {}, {}, {});
+			
+			dae::Triangle tri{};
 			tri.cullMode = mesh.cullMode;
 			tri.materialIndex = mesh.materialIndex;
+			
 
 			for (int i = 0; i < mesh.normals.size(); i++)
 			{
@@ -357,39 +215,31 @@ namespace dae
 				tri.v1 = mesh.transformedPositions[mesh.indices[i * 3 + 1]];
 				tri.v2 = mesh.transformedPositions[mesh.indices[i * 3 + 2]];
 				tri.normal = mesh.transformedNormals[i];
-
-				HitTest_TriangleMoeller(tri, ray, hitRecord);
 				
-			}
-			return hitRecord.didHit;
-			
-		}
-
-		inline bool DoesHit_TriangleMesh(const TriangleMesh& mesh, const Ray& ray)
-		{
-		
-			if (!SlabTest_TriangleMesh(mesh, ray)) {return false;}
-
-			for (int i = 0; i < mesh.indices.size() / 3; i++)
-			{
-				const Vector3& v0 = mesh.transformedPositions[mesh.indices[i * 3]];
-				const Vector3& v1 = mesh.transformedPositions[mesh.indices[i * 3 + 1]];
-				const Vector3& v2 = mesh.transformedPositions[mesh.indices[i * 3 + 2]];
-			
-				dae::Triangle tri = Triangle(v0, v1, v2, mesh.transformedNormals[i]);
-				tri.cullMode = mesh.cullMode;
-				tri.materialIndex = mesh.materialIndex;
-				
-				if (DoesHit_TriangleMoeller(tri, ray))
+				if (ignoreHitRecord)
 				{
-					return true;
+					if (HitTest_TriangleMoeller(tri, ray, hitRecord, ignoreHitRecord)) return true;
+				}
+				else
+				{
+					HitTest_TriangleMoeller(tri, ray, hitRecord, ignoreHitRecord);
 				}
 				
 			}
-		return false;
+			if (ignoreHitRecord) 
+			{
+				return false;
+			}
+			else 
+			{
+				return hitRecord.didHit;
+			}
 		}
 
-		
+		inline bool HitTest_TriangleMesh(const TriangleMesh& mesh, const Ray& ray) {
+			HitRecord temp{};
+			return HitTest_TriangleMesh(mesh, ray, temp, true);
+		}
 #pragma endregion
 	}
 

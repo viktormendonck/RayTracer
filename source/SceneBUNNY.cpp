@@ -1,17 +1,14 @@
-#include "Scene_W4.h"
+#include "SceneBUNNY.h"
 #include "Material.h"
 #include "utils.h"
 
-
-Scene_W4::~Scene_W4()
+SceneBUNNY::~SceneBUNNY()
 {
-	//do not delete pointers
-	//it is evil :3
 }
 
-void Scene_W4::Initialize()
+void SceneBUNNY::Initialize()
 {
-	
+
 	m_Camera.origin = { 0.f,3.f,-9.f };
 	m_Camera.fovAngle = 45.f;
 
@@ -26,15 +23,15 @@ void Scene_W4::Initialize()
 	AddPlane(dae::Vector3{ 5.f, 0.f, 0.f }, dae::Vector3{ -1.f, 0.f, 0.f }, matLambert_GrayBlue); //RIGHT
 	AddPlane(dae::Vector3{ -5.f, 0.f, 0.f }, dae::Vector3{ 1.f, 0.f, 0.f }, matLambert_GrayBlue); //LEFT
 
-	
+
 
 	////OBJ
 	////===
 	m_MeshPtr = AddTriangleMesh(dae::TriangleCullMode::BackFaceCulling, matLambert_White);
 	//dae::Utils::ParseOBJ("Resources/simple_cube.obj",
 	dae::Utils::ParseOBJ("Resources/lowpoly_bunny2.obj",
-		m_MeshPtr->positions, 
-		m_MeshPtr->normals, 
+		m_MeshPtr->positions,
+		m_MeshPtr->normals,
 		m_MeshPtr->indices);
 
 
@@ -49,12 +46,10 @@ void Scene_W4::Initialize()
 	AddPointLight(dae::Vector3{ -2.5f, 5.f, -5.f }, 70.f, dae::ColorRGB{ 1.f, .8f, .45f }); //Front Light Left
 	AddPointLight(dae::Vector3{ 2.5f, 2.5f, -5.f }, 50.f, dae::ColorRGB{ .34f, .47f, .68f });
 }
-
-void Scene_W4::Update(dae::Timer* pTimer)
+void SceneBUNNY::Update(dae::Timer* pTimer)
 {
 	Scene::Update(pTimer);
 
 	m_MeshPtr->RotateY(std::sinf(pTimer->GetTotal() * m_MeshRotationSpeed) * 2 * dae::PI);
 	m_MeshPtr->UpdateTransforms();
 }
-

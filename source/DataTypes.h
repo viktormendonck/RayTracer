@@ -130,7 +130,7 @@ namespace dae
 		{
 			normals.clear();
 			normals.reserve(indices.size());
-			int amountOfTriangles{static_cast<int>( indices.size()) / 3 };
+			const int amountOfTriangles{static_cast<int>( indices.size()) / 3 };
 			for (int i{}; i < amountOfTriangles; ++i) 
 			{
 				const Vector3 l1{positions[indices[i * 3]] - positions[indices[i * 3 + 1]]};
@@ -143,7 +143,7 @@ namespace dae
 
 		void UpdateTransforms()
 		{
-			Matrix finalTransform = scaleTransform * rotationTransform * translationTransform;
+			const Matrix finalTransform = scaleTransform * rotationTransform * translationTransform;
 
 			transformedPositions.clear();
 			transformedPositions.reserve(positions.size());

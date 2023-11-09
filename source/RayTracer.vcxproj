@@ -103,6 +103,8 @@ xcopy "$(SolutionDir)..\lib\vld\x64\Microsoft.DTfW.DHL.manifest" "$(OutDir)" /y 
     <ClInclude Include="Matrix.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="Scene.h" />
+    <ClInclude Include="SceneBUNNY.h" />
+    <ClInclude Include="SceneEXTRA.h" />
     <ClInclude Include="SceneREFERENCE.h" />
     <ClInclude Include="Scene_W1.h" />
     <ClInclude Include="Scene_W2.h" />
@@ -118,6 +120,8 @@ xcopy "$(SolutionDir)..\lib\vld\x64\Microsoft.DTfW.DHL.manifest" "$(OutDir)" /y 
     <ClCompile Include="Matrix.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Scene.cpp" />
+    <ClCompile Include="SceneBUNNY.cpp" />
+    <ClCompile Include="SceneEXTRA.cpp" />
     <ClCompile Include="SceneREFERENCE.cpp" />
     <ClCompile Include="Scene_W1.cpp" />
     <ClCompile Include="Scene_W2.cpp" />

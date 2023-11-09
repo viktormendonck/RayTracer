@@ -33,7 +33,7 @@ namespace dae {
 		hitRecord.t = INFINITY;
 		for (Sphere sphere : m_SphereGeometries)
 		{
-			if (GeometryUtils::HitTest_Sphere(sphere, ray, hitRecord))
+			if (GeometryUtils::HitTest_Sphere(sphere, ray, hitRecord,false))
 			{
 				if (hitRecord.t < closestHit.t)
 				{
@@ -44,7 +44,7 @@ namespace dae {
 		}
 		for (Plane plane : m_PlaneGeometries)
 		{
-			if (GeometryUtils::HitTest_Plane(plane, ray, hitRecord))
+			if (GeometryUtils::HitTest_Plane(plane, ray, hitRecord,false))
 			{
 				if (hitRecord.t < closestHit.t)
 				{
@@ -55,7 +55,7 @@ namespace dae {
 		}
 		for (TriangleMesh triangleMeshGeometry : m_TriangleMeshGeometries)
 		{
-			if (GeometryUtils::HitTest_TriangleMesh(triangleMeshGeometry, ray, hitRecord))
+			if (GeometryUtils::HitTest_TriangleMesh(triangleMeshGeometry, ray, hitRecord,false))
 			{
 				if (hitRecord.t < closestHit.t)
 				{
@@ -81,7 +81,7 @@ namespace dae {
 		
 		for (size_t i{}; i < m_SphereGeometries.size(); ++i)
 		{
-			if (GeometryUtils::DoesHit_Sphere(m_SphereGeometries[i], ray))
+			if (GeometryUtils::HitTest_Sphere(m_SphereGeometries[i], ray))
 			{
 				return true;
 			}
@@ -89,7 +89,7 @@ namespace dae {
 
 		for (size_t i{}; i < m_PlaneGeometries.size(); ++i)
 		{
-			if (GeometryUtils::DoesHit_Plane(m_PlaneGeometries[i], ray))
+			if (GeometryUtils::HitTest_Plane(m_PlaneGeometries[i], ray))
 			{
 				return true;
 			}
@@ -97,12 +97,12 @@ namespace dae {
 		for (size_t i{}; i < m_TriangleMeshGeometries.size(); ++i)
 		{
 		
-			if (GeometryUtils::DoesHit_TriangleMesh(m_TriangleMeshGeometries[i], ray))
+			if (GeometryUtils::HitTest_TriangleMesh(m_TriangleMeshGeometries[i], ray))
 			{
 				return true;
 			}
 		
-
+		
 		}
 
 		return false;

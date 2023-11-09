@@ -75,6 +75,12 @@
     <ClInclude Include="SceneREFERENCE.h">
       <Filter>scenes\final</Filter>
     </ClInclude>
+    <ClInclude Include="SceneEXTRA.h">
+      <Filter>scenes\final</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneBUNNY.h">
+      <Filter>scenes\final</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -107,6 +113,12 @@
       <Filter>scenes</Filter>
     </ClCompile>
     <ClCompile Include="SceneREFERENCE.cpp">
+      <Filter>scenes\final</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneEXTRA.cpp">
+      <Filter>scenes\final</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneBUNNY.cpp">
       <Filter>scenes\final</Filter>
     </ClCompile>
   </ItemGroup>
