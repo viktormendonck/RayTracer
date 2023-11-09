@@ -14,7 +14,9 @@ public:
 	void Initialize() override;
 	void Update(dae::Timer* pTimer) override;
 private:
+	//std::vector<dae::TriangleMesh*> m_Meshes{ 2 };
 	dae::TriangleMesh* m_MeshPtr{};
+	dae::TriangleMesh* m_Mesh2Ptr{};
 	const float m_MeshRotationSpeed{ 0.75f };
 };
 

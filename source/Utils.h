@@ -12,23 +12,23 @@ namespace dae
 	{
 #pragma region Sphere HitTest
 		//SPHERE HIT-TESTS
-		inline bool HitTest_Sphere(const Sphere& sphere, const Ray& ray, HitRecord& hitRecord, bool ignoreHitRecord)
+		inline bool HitTest_Sphere(const Sphere& sphere, const Ray& ray, HitRecord& hitRecord, bool ignoreHitRecord = false)
 		{
 			const Vector3 rayOriginToSphereOrigin{ sphere.origin - ray.origin };
 			const float hypotenuseSquared{ rayOriginToSphereOrigin.SqrMagnitude() };
 			const float side1{ Vector3::Dot(rayOriginToSphereOrigin, ray.direction) };
-
+			
 			const float distanceToRaySquared = hypotenuseSquared - side1 * side1;
-
+			
 			//if the distance to the ray is larger than the radius there will be no results
 			//    also if equal because that is the exact border of the circle
 			if (distanceToRaySquared >= sphere.radius * sphere.radius) {
 				return false;
 			}
-
+			
 			const float distanceRaypointToIntersect = sqrt(sphere.radius * sphere.radius - distanceToRaySquared);
 			const float t = side1 - distanceRaypointToIntersect;
-
+			
 			if (t < ray.min || t > ray.max) {
 				return false;
 			}
@@ -51,7 +51,7 @@ namespace dae
 
 #pragma region Plane HitTest
 		//PLANE HIT-TESTS
-		inline bool HitTest_Plane(const Plane& plane, const Ray& ray, HitRecord& hitRecord, bool ignoreHitRecord)
+		inline bool HitTest_Plane(const Plane& plane, const Ray& ray, HitRecord& hitRecord, bool ignoreHitRecord = false)
 		{
 			const float denom = Vector3::Dot(ray.direction,plane.normal);
 			const float t = Vector3::Dot((plane.origin - ray.origin), plane.normal) / denom;
@@ -86,7 +86,7 @@ namespace dae
 			return Vector3::Dot(cross, n) <= 0;
 		}
 		//TRIANGLE HIT-TESTS
-		inline bool HitTest_Triangle(const Triangle& triangle, const Ray& ray, HitRecord& hitRecord, bool ignoreHitRecord)
+		inline bool HitTest_Triangle(const Triangle& triangle, const Ray& ray, HitRecord& hitRecord, bool ignoreHitRecord = false)
 		{
 			const float dot{ Vector3::Dot(triangle.normal, ray.direction) };
 
@@ -132,7 +132,7 @@ namespace dae
 
 		
 
-		inline bool HitTest_TriangleMoeller(const Triangle& triangle, const Ray& ray, HitRecord& hitRecord, bool ignoreHitRecord)
+		inline bool HitTest_TriangleMoeller(const Triangle& triangle, const Ray& ray, HitRecord& hitRecord, bool ignoreHitRecord = false)
 		{
 			const float dot{ Vector3::Dot(triangle.normal, ray.direction) };
 			
@@ -198,9 +198,9 @@ namespace dae
 			tmax = std::min(tmax, std::max(tz1, tz2));
 
 			return tmax > 0 && tmax >= tmin;
-		}
+		} 
 
-		inline bool HitTest_TriangleMesh(const TriangleMesh& mesh, const Ray& ray, HitRecord& hitRecord, bool ignoreHitRecord)
+		inline bool HitTest_TriangleMesh(const TriangleMesh& mesh, const Ray& ray, HitRecord& hitRecord, bool ignoreHitRecord = false)
 		{
 			if (!SlabTest_TriangleMesh(mesh, ray)) { return false; }
 			

@@ -29,51 +29,46 @@ namespace dae {
 
 	void dae::Scene::GetClosestHit(const Ray& ray, HitRecord& closestHit) const
 	{
-		HitRecord hitRecord{};
-		hitRecord.t = INFINITY;
-		for (Sphere sphere : m_SphereGeometries)
+		for (size_t i{}; i < m_SphereGeometries.size(); ++i)
 		{
-			if (GeometryUtils::HitTest_Sphere(sphere, ray, hitRecord,false))
+			HitRecord hitRecord{};
+			if (GeometryUtils::HitTest_Sphere(m_SphereGeometries[i], ray, hitRecord, false)) 
 			{
-				if (hitRecord.t < closestHit.t)
-				{
-					closestHit = hitRecord;
-				}
-			}
 
-		}
-		for (Plane plane : m_PlaneGeometries)
-		{
-			if (GeometryUtils::HitTest_Plane(plane, ray, hitRecord,false))
-			{
-				if (hitRecord.t < closestHit.t)
-				{
-					closestHit = hitRecord;
-				}
-			}
-
-		}
-		for (TriangleMesh triangleMeshGeometry : m_TriangleMeshGeometries)
-		{
-			if (GeometryUtils::HitTest_TriangleMesh(triangleMeshGeometry, ray, hitRecord,false))
-			{
 				if (hitRecord.t < closestHit.t)
 				{
 					closestHit = hitRecord;
 				}
 			}
 		}
-		//for (Triangle triangleGeometry : m_TriangleGeometries)
-		//{
-		//	if (GeometryUtils::HitTest_Triangle(triangleGeometry, ray, hitRecord))
-		//	{
-		//		if (hitRecord.t < closestHit.t)
-		//		{
-		//			closestHit = hitRecord;
-		//		}
-		//	}
-		//}
+		for (size_t i{}; i < m_PlaneGeometries.size(); ++i)
+		{
+			HitRecord hitRecord{};
+			if (GeometryUtils::HitTest_Plane(m_PlaneGeometries[i], ray, hitRecord, false)) 
+			{
+				if (hitRecord.t < closestHit.t)
+				{
+					closestHit = hitRecord;
+				}
+			}
+			
+			
+	
+		}
+		for (size_t i{}; i < m_TriangleMeshGeometries.size(); ++i)
+		{
+			HitRecord hitRecord{};
 
+			if (GeometryUtils::HitTest_TriangleMesh(m_TriangleMeshGeometries[i], ray, hitRecord, false)) 
+			{
+				if (hitRecord.t < closestHit.t)
+				{
+					closestHit = hitRecord;
+				}
+			}
+			
+		}
+	
 	}
 
 	bool Scene::DoesHit(const Ray& ray) const
@@ -86,7 +81,7 @@ namespace dae {
 				return true;
 			}
 		}
-
+	
 		for (size_t i{}; i < m_PlaneGeometries.size(); ++i)
 		{
 			if (GeometryUtils::HitTest_Plane(m_PlaneGeometries[i], ray))
@@ -104,10 +99,11 @@ namespace dae {
 		
 		
 		}
-
+	
 		return false;
 		
 	}
+
 
 #pragma region Scene Helpers
 	Sphere* Scene::AddSphere(const Vector3& origin, float radius, unsigned char materialIndex)
